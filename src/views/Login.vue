@@ -65,7 +65,6 @@ export default{
 					email: res.user.email,
 					photo: res.user.photoURL
 				}).then(() => {
-					this.$store.commit('addUser', res.user)
 					this.$router.push({name: 'Home'})
 				}).catch(e => console.error(e))
 			}).catch(e => {
@@ -86,7 +85,6 @@ export default{
 					email: res.user.email,
 					photo: res.user.photoURL
 				}).then(() => {
-					this.$store.commit('addUser', res.user)
 					this.$router.push({name: 'Home'})
 				}).catch(e => console.error(e))
 			}).catch(e => {

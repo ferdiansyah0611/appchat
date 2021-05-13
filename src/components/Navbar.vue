@@ -1,42 +1,42 @@
 <template>
   <div>
-    <nav class="bg-blue-700 flex p-2 h-auto fixed top-0 left-0 w-full shadow-md z-40">
+    <nav class="bg-blue-700 flex p-3 h-auto fixed top-0 left-0 w-full shadow-md z-40">
       <div class="flex flex-wrap w-1/2 justify-start">
         <h5 class="text-white p-2 font-bold">App Chat</h5>
       </div>
       <div class="flex flex-wrap w-1/2 justify-end mr-2">
-        <a @click="menu" href="/">
-					<MenuIcon class="h-10 text-white float-right cursor-pointer" />
-        </a>
+				<MenuIcon @click="menu" class="h-10 w-8 text-white float-right cursor-pointer" />
       </div>
     </nav>
     <div id="body-sidebar" :class="bodyClass">
       <div class="flex flex-wrap justify-center mt-5">
         <div class="w-full">
-          <img src="/favicon.ico" alt="avatar" class="w-24 mx-auto">
+          <img v-if="user" :src="user.photoURL" alt="avatar" class="w-24 mx-auto">
+          <img v-else src="/favicon.ico" alt="avatar" class="w-24 mx-auto">
         </div>
-        <h3 class="w-full text-center font-bold">Ferdiansyah</h3>
+        <h3 v-if="user" class="w-full text-center font-bold mt-2">{{user.displayName}}</h3>
       </div>
       <div class="flex flex-wrap mt-5">
         <router-link to="/" class="w-full p-3 font-medium hover:bg-blue-300 hover:bg-opacity-50 flex">
           <HomeIcon class="h-6 w-1/3"/>
           <span class="-w-2/3">Home</span>
         </router-link>
-        <a @click="logout" href="/" class="w-full p-3 font-medium hover:bg-blue-300 hover:bg-opacity-50 flex">
+        <a v-if="user" @click="logout" href="/" class="w-full p-3 font-medium hover:bg-blue-300 hover:bg-opacity-50 flex">
           <LogoutIcon class="h-6 w-1/3"/>
           <span class="-w-2/3">Logout</span>
         </a>
-        <router-link to="/login" class="w-full p-3 font-medium hover:bg-blue-300 hover:bg-opacity-50 flex">
+        <router-link v-if="!user" to="/login" class="w-full p-3 font-medium hover:bg-blue-300 hover:bg-opacity-50 flex">
           <LoginIcon class="h-6 w-1/3"/>
           <span class="-w-2/3">Login</span>
         </router-link>
       </div>
+      <div class="absolute bottom-0 right-0 mb-4 mr-2">&copy; 2020 ferdiansyah0611</div>
     </div>
     <div @click="menu" id="overlay-sidebar" :class="overlayClass"></div>
   </div>
 </template>
 <script>
-import firebase from 'firebase'
+import {auth} from '@/firebase'
 import {
   HomeIcon,MenuIcon,LogoutIcon,LoginIcon
 } from '@vue-hero-icons/outline'
@@ -51,6 +51,7 @@ export default {
   },
   data(){
     return {
+      user: auth.currentUser,
       opened: false,
       bodyClass: 'h-screen bg-blue-500 fixed right-0 top-0 text-white transition-all duration-500 z-40',
       overlayClass: 'h-screen bg-black fixed left-0 top-0 bg-opacity-75 transition-all duration-500 z-40'
@@ -79,8 +80,8 @@ export default {
     },
     logout(e){
       e.preventDefault()
-      firebase.auth().signOut().then(() => {
-        console.log('successful')
+      auth.signOut().then(() => {
+        this.$router.push({name: 'Login'})
       }).catch((error) => {
         console.error(error)
       });

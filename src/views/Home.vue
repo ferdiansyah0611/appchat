@@ -1,6 +1,6 @@
 <template>
 	<section class="p-4">
-		<div class="bg-white mt-5 p-3 mx-auto w-full md:w-1/2 lg:w-1/3">
+		<div class="bg-white mt-5 p-3 mx-auto w-full md:w-1/2 lg:w-2/5">
 			<h4 class="font-bold text-xl mb-2">Manage Room</h4>
 			<div class="flex space-x-1">
 				<button @click="changeTab" data-name="my-room" class="bg-indigo-400 text-white p-3 font-medium w-1/3 focus:outline-none focus:ring">My Room</button>
@@ -10,12 +10,15 @@
 			<div id="body-tabs">
 				<div v-for="list in listTab" v-bind:key="list">
 					<div v-if="list == activeTab" class="block mt-4">
-						<div v-if="activeTab == 'my-room'" class="">
-							<p class="mx-auto mt-10 mb-10" v-if="listJoined.length === 0">Room is empty</p>
-							<div v-else class="flex flex-wrap" v-for="joined in listJoined" v-bind:key="joined">
-								<router-link :to="/room/ + joined" class="w-full border-b p-2 cursor-pointer hover:bg-gray-200">
-									<b>{{joined}}</b>
-								</router-link>
+						<div v-if="activeTab == 'my-room'">
+							<p class="mx-auto mt-10 mb-10 w-full text-center" v-if="listJoined.length === 0">Room is empty</p>
+							<div v-else class="grid grid-cols-2 gap-3">
+								<div class="flex flex-wrap h-20 text-center" v-for="joined in listJoined" v-bind:key="joined[Object.getOwnPropertyNames(joined)[0]]">
+									<router-link :to="{path: '/room/' + joined[Object.getOwnPropertyNames(joined)[0]]}" class="w-full border p-2 cursor-pointer hover:bg-gray-200">
+										<p><b>{{joined[Object.getOwnPropertyNames(joined)[0]]}}</b></p>
+									</router-link>
+								</div>
+								
 							</div>
 						</div>
 						<div v-if="activeTab == 'create-room'">
@@ -62,12 +65,16 @@ export default {
   },
 	mounted(){
 		document.title = 'Home | App Chat'
+		var i = 0;
 			const getUser = db.ref(`users/${auth.currentUser.uid}/joined`)
 				getUser.on('value', (snapshot) => {
-					window.snapshot = snapshot
+					this.listJoined = []
 					snapshot.forEach((snap) => {
-						console.log(snap.val())
+						var data = snap.val()
+						data.key = i
+						i +=1
 						this.listJoined = [...this.listJoined, snap.val()]
+						/*console.log(data)*/
 					})
 				})
 	},
@@ -77,21 +84,28 @@ export default {
 		},
 		SubmitCreateRoom(e){
 			e.preventDefault()
-			db.ref(`chats/${this.createRoom}`).set({
-				admin: auth.currentUser.uid
-			}).then(() => {
-				db.ref(`users/${auth.currentUser.uid}/joined`).set({
-					[this.createRoom]: this.createRoom
-				}).then(() => this.success = 'Successful create the room')
-				this.success = 'Successful create the room'
-			}).catch(e => this.error = e.message)
+			db.ref(`chats/${this.createRoom}`).get().then(snapshot => {
+				if(!snapshot.exists()){
+					db.ref(`chats/${this.createRoom}`).set({
+						admin: auth.currentUser.uid
+					}).then(() => {
+						db.ref(`users/${auth.currentUser.uid}/joined/${this.createRoom}`).set({
+							[this.createRoom]: this.createRoom
+						}).then(() => {
+							this.createRoom = ''
+							this.success = 'Successful create the room'
+						})
+					}).catch(e => this.error = e.message)
+				}else{
+					this.error = 'Failed to create the room because this room has created'
+				}
+			})
 		},
 		SubmitJoinRoom(e){
 			e.preventDefault()
 			db.ref(`chats/${this.joinedRoom}`).get().then((snapshot) => {
-				console.log(snapshot)
 				if(snapshot.exists()){
-					db.ref(`users/${auth.currentUser.uid}/joined`).set({
+					db.ref(`users/${auth.currentUser.uid}/joined/${this.joinedRoom}`).set({
 						[this.joinedRoom]: this.joinedRoom
 					}).then(() => {
 						db.ref(`chats/${this.joinedRoom}/member`).set({
@@ -99,6 +113,7 @@ export default {
 							name: auth.currentUser.displayName,
 							avatar: auth.currentUser.photoURL
 						}).then(() => {
+							this.joinedRoom = ''
 							this.success = 'Successful join the room'
 						}).catch(e => this.error = e.message)
 					}).catch(e => this.error = e.message)
