@@ -10,7 +10,7 @@ var firebaseConfig = {
 	appId: process.env.VUE_APP_APPID,
 	measurementId: process.env.VUE_APP_MEASUREMENTID
 }
-console.log(firebaseConfig)
+
 firebase.initializeApp(firebaseConfig)
 
 const auth 		= firebase.auth()

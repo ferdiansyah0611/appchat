@@ -19,16 +19,19 @@
 							</div>
 						</div>
 						<div v-if="activeTab == 'create-room'">
-							<div class="bg-green-400 text-white p-3 mt-3" v-if="success">{{success}}</div>
-							<form @submit="SubmitcreateRoom">
+							<Notification v-if="success" type="success" :msg="success"/>
+							<Notification v-if="error" type="error" :msg="error"/>
+							<form @submit="SubmitCreateRoom">
 								<input v-model="createRoom" type="text" class="p-3 w-full border mt-4 focus:outline-none focus:ring focus:ring-blue-100" placeholder="Name room...">
 								<button type="submit" class="p-3 bg-blue-400 text-white mt-4">Create</button>
 							</form>
 						</div>
 						<div v-if="activeTab == 'join-room'">
-							<form>
-								<input type="text" class="p-3 w-full border mt-4 focus:outline-none focus:ring focus:ring-blue-100" placeholder="Name room...">
-								<button  class="p-3 bg-blue-400 text-white mt-4">Join</button>
+							<Notification v-if="success" type="success" :msg="success"/>
+							<Notification v-if="error" type="error" :msg="error"/>
+							<form @submit="SubmitJoinRoom">
+								<input v-model="joinedRoom" type="text" class="p-3 w-full border mt-4 focus:outline-none focus:ring focus:ring-blue-100" placeholder="Name room...">
+								<button type="submit" class="p-3 bg-blue-400 text-white mt-4">Join</button>
 							</form>
 						</div>
 					</div>
@@ -40,18 +43,25 @@
 
 <script>
 import {auth, db} from '@/firebase'
+import Notification from '@/components/Notification'
 export default {
   name: 'Home',
+	components: {
+		Notification
+	},
   data(){
 		return{
 			activeTab: 'my-room',
 			listTab: ['my-room', 'create-room', 'join-room'],
 			createRoom: '',
+			joinedRoom: '',
 			success: '',
+			error: '',
 			listJoined: []
 		}
   },
 	mounted(){
+		document.title = 'Home | App Chat'
 			const getUser = db.ref(`users/${auth.currentUser.uid}/joined`)
 				getUser.on('value', (snapshot) => {
 					window.snapshot = snapshot
@@ -65,15 +75,37 @@ export default {
 		changeTab(e){
 			this.activeTab = e.target.dataset.name
 		},
-		SubmitcreateRoom(e){
+		SubmitCreateRoom(e){
 			e.preventDefault()
 			db.ref(`chats/${this.createRoom}`).set({
 				admin: auth.currentUser.uid
 			}).then(() => {
 				db.ref(`users/${auth.currentUser.uid}/joined`).set({
 					[this.createRoom]: this.createRoom
-				})
+				}).then(() => this.success = 'Successful create the room')
 				this.success = 'Successful create the room'
+			}).catch(e => this.error = e.message)
+		},
+		SubmitJoinRoom(e){
+			e.preventDefault()
+			db.ref(`chats/${this.joinedRoom}`).get().then((snapshot) => {
+				console.log(snapshot)
+				if(snapshot.exists()){
+					db.ref(`users/${auth.currentUser.uid}/joined`).set({
+						[this.joinedRoom]: this.joinedRoom
+					}).then(() => {
+						db.ref(`chats/${this.joinedRoom}/member`).set({
+							uid: auth.currentUser.uid,
+							name: auth.currentUser.displayName,
+							avatar: auth.currentUser.photoURL
+						}).then(() => {
+							this.success = 'Successful join the room'
+						}).catch(e => this.error = e.message)
+					}).catch(e => this.error = e.message)
+				}
+				else{
+					this.error = 'Chat Room Not Founds'
+				}
 			})
 		}
   }

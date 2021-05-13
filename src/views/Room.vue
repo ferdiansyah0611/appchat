@@ -17,11 +17,15 @@
 						<div class="block mt-2 bg-gray-200 border border-gray-300 rounded-xl">
 							<div class="flex cursor-pointer border-b border-gray-300">
 								<img :src="data.avatar" class="p-2 w-12" alt="">
-								<p class="p-2 font-bold mt-1">{{data.name}}</p>
-								<p class="p-2 mt-1">{{new Date(data.created).toLocaleDateString("en-US")}} {{new Date(data.created).toLocaleTimeString("en-US")}}</p>
+								<p class="p-2 pl-0 font-bold mt-1">{{data.name}}</p>
 							</div>
 							<div class=" p-2 rounded-3xl">
-								{{data.message}}
+								<p class="text-sm">{{data.message}}</p>
+								<p class="text-xs font-medium mt-1">{{new Date(data.created).toLocaleDateString("en-US")}} {{new Date(data.created).toLocaleTimeString("en-US")}}</p>
+							</div>
+							<div class="border-t border-gray-300 flex">
+								<button class="p-2 font-bold text-sm hover:text-red-600">Reply</button>
+								<button class="p-2 font-bold text-sm hover:text-red-600">Report</button>
 							</div>
 						</div>
 					</div>
@@ -30,20 +34,23 @@
 						<div class="block mt-2 bg-gray-200 border border-gray-300 rounded-xl">
 							<div class="flex cursor-pointer border-b border-gray-300">
 								<img :src="data.avatar" class="p-2 w-12" alt="">
-								<p class="p-2 font-bold mt-1">{{data.name}}</p>
-								<p class="p-2 mt-1">{{data.created}}</p>
+								<p class="p-2 pl-0 font-bold mt-1">{{data.name}}</p>
 							</div>
 							<div class=" p-2 rounded-3xl">
-								{{data.message}}
+								<p class="text-sm">{{data.message}}</p>
+								<p class="text-xs font-medium mt-1">{{new Date(data.created).toLocaleDateString("en-US")}} {{new Date(data.created).toLocaleTimeString("en-US")}}</p>
+							</div>
+							<div class="border-t border-gray-300 flex">
+								<button class="p-2 font-bold text-sm hover:text-red-600">Reply</button>
+								<button class="p-2 font-bold text-sm hover:text-red-600">Report</button>
 							</div>
 						</div>
 					</div>
-					
 				</div>
 			</div>
 		</div>
 		<form @submit="sendChat" class="fixed left-0 bottom-0 mx-auto w-full flex">
-			<input v-model="message" class="bg-white mx-auto w-full md:w-1/2 p-3 rounded-2xl focus:outline-none focus:ring" type="text" placeholder="Type here...">
+			<input v-model="message" class="bg-white border mx-auto w-full md:w-1/2 p-3 focus:outline-none focus:ring" type="text" placeholder="Type here...">
 		</form>
 	</section>
 </template>
@@ -67,6 +74,7 @@ export default{
 		}
 	},
 	mounted(){
+		document.title = `Room ${this.$route.params.id} | App Chat`
 		this.id = this.$route.params.id
 		db.ref(`chats/${this.id}/chat`).on('value', (snapshot) => {
 			this.chat = []
@@ -88,6 +96,7 @@ export default{
 				created: firebase.database.ServerValue.TIMESTAMP
 			}).then(() => {
 				console.log('success add')
+				this.message = ''
 			}).catch(e => console.log(e))
 		}
 	}
