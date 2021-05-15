@@ -9,7 +9,7 @@ import {auth} from './firebase'
 Vue.config.productionTip = false
 
 let app
-auth.onAuthStateChanged((user) => {
+auth.onAuthStateChanged(() => {
 if(!app){
 	app = new Vue({
 		router,
