@@ -1,4 +1,5 @@
-# chatapp
+# Chat App
+Web project to chat realtime in group chat, not personal. Built using vue v3, tailwindcss, firebase. It is necessary to create a group or join an already created group to start a chat. Result deployment in http://appchat-kohl.vercel.app/
 
 ## Project setup
 ```
