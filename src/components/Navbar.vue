@@ -1,6 +1,6 @@
 <template>
   <div>
-    <nav class="bg-blue-700 flex p-3 h-auto fixed top-0 left-0 w-full shadow-md z-40">
+    <nav class="bg-blue-700 flex p-3 h-auto fixed top-0 left-0 w-full shadow-md z-30">
       <div class="flex flex-wrap w-1/2 justify-start">
         <h5 class="text-white p-2 font-bold">App Chat</h5>
       </div>
@@ -54,7 +54,7 @@ export default {
       user: auth.currentUser,
       opened: false,
       bodyClass: 'h-screen bg-blue-500 fixed right-0 top-0 text-white transition-all duration-500 z-40',
-      overlayClass: 'h-screen bg-black fixed left-0 top-0 bg-opacity-75 transition-all duration-500 z-40'
+      overlayClass: 'h-screen bg-black fixed left-0 top-0 bg-opacity-75 transition-all duration-200 z-30 w-full'
     }
   },
   mounted(){},
@@ -101,7 +101,6 @@ export default {
     margin-right: -100%;
   }
   #overlay-sidebar{
-    width: calc(100% - 240px);
     margin-left: -100%;
   }
 </style>

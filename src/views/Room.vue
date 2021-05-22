@@ -1,6 +1,6 @@
 <template>
 	<section class="p-3">
-		<div class="bg-white mb-48 mx-auto w-full md:w-1/2 flex flex-wrap">
+		<div class="bg-white mb-48 md:mb-14 mx-auto w-full md:w-1/2 flex flex-wrap">
 			<div class="flex flex-wrap w-full relative">
 				<div class="w-4/5">
 					<h3 class="font-bold my-1 px-4 text-xl">{{id}}</h3>
@@ -33,12 +33,14 @@
 							</div>
 							<div class="p-2 rounded-3xl">
 								<p class="text-sm">{{data.message}}</p>
+								<img v-if="data.img" :src="data.img" alt="image">
+								<audio v-if="data.audio" :src="data.audio"></audio>
 								<p class="text-xs font-medium mt-1">{{new Date(data.created).toLocaleDateString("en-US")}} {{new Date(data.created).toLocaleTimeString("en-US")}}</p>
 							</div>
 							<div class="border-t border-gray-300 flex">
 								<button class="p-2 font-bold text-sm hover:text-red-600 focus:outline-none">Reply</button>
 								<button class="p-2 font-bold text-sm hover:text-red-600 focus:outline-none">Report</button>
-								<button @click="deleteChat" :data-id="data.id" class="p-2 font-bold text-sm hover:text-red-600">Delete</button>
+								<button @click="deleteChat" :data-id="data.id" class="p-2 font-bold text-sm hover:text-red-600 focus:outline-none">Delete</button>
 							</div>
 						</div>
 					</div>
@@ -51,6 +53,8 @@
 							</div>
 							<div class=" p-2 rounded-3xl">
 								<p class="text-sm">{{data.message}}</p>
+								<img v-if="data.img" :src="data.img" alt="">
+								<audio v-if="data.audio" :src="data.audio"></audio>
 								<p class="text-xs font-medium mt-1">{{new Date(data.created).toLocaleDateString("en-US")}} {{new Date(data.created).toLocaleTimeString("en-US")}}</p>
 							</div>
 							<div class="border-t border-gray-300 flex">
@@ -63,38 +67,38 @@
 			</div>
 		</div>
 		<form @submit="sendChat" class="fixed left-0 bottom-0 mx-auto w-full flex flex-wrap">
-			<div id="body-attachment" class="mb-min-full w-full md:hidden bg-blue-400 flex flex-wrap justify-center shadow relative transition-all duration-500">
-				<div @click="chooseFile" data-name="image" class="w-1/4 flex flex-wrap justify-center cursor-pointer hover:bg-blue-300 text-white">
+			<div id="body-attachment" class="mb-min-full w-full md:w-auto md:block md:fixed md:right-0 md:top-0 md:mt-32 bg-blue-400 flex flex-wrap justify-center shadow relative transition-all duration-500">
+				<div @click="chooseFile" data-name="image" class="w-1/4 md:w-full md:p-2 flex flex-wrap justify-center cursor-pointer hover:bg-blue-300 text-white">
 					<span data-name="image" class="w-full flex justify-center">
 						<PhotographIcon data-name="image" class="h-14 text-white"></PhotographIcon>
 					</span>
-					<span class="w-full text-center mb-4 font-bold">Image</span>
+					<span data-name="image" class="w-full text-center mb-4 font-bold">Image</span>
 				</div>
-				<div @click="chooseFile" data-name="document" class="w-1/4 flex flex-wrap justify-center cursor-pointer hover:bg-blue-300 text-white">
+				<div @click="chooseFile" data-name="document" class="w-1/4 md:w-full md:p-2 flex flex-wrap justify-center cursor-pointer hover:bg-blue-300 text-white">
 					<span data-name="document" class="w-full flex justify-center">
 						<DocumentAddIcon data-name="document" class="h-14 text-white"></DocumentAddIcon>
 					</span>
-					<span class="w-full text-center mb-4 font-bold">Document</span>
+					<span data-name="document" class="w-full text-center mb-4 font-bold">Document</span>
 				</div>
-				<div @click="chooseFile" data-name="audio" class="w-1/4 flex flex-wrap justify-center cursor-pointer hover:bg-blue-300 text-white">
+				<div @click="chooseFile" data-name="audio" class="w-1/4 md:w-full md:p-2 flex flex-wrap justify-center cursor-pointer hover:bg-blue-300 text-white">
 					<span data-name="audio" class="w-full flex justify-center">
 						<MicrophoneIcon data-name="audio" class="h-14 text-white"></MicrophoneIcon>
 					</span>
-					<span class="w-full text-center mb-4 font-bold">Audio</span>
+					<span data-name="audio" class="w-full text-center mb-4 font-bold">Audio</span>
 				</div>
-				<div @click="chooseFile" data-name="contact" class="w-1/4 flex flex-wrap justify-center cursor-pointer hover:bg-blue-300 text-white">
+				<div @click="chooseFile" data-name="contact" class="w-1/4 md:w-full md:p-2 flex flex-wrap justify-center cursor-pointer hover:bg-blue-300 text-white">
 					<span data-name="contact" class="w-full flex justify-center">
 						<UserIcon data-name="contact" class="h-14 text-white"></UserIcon>
 					</span>
-					<span class="w-full text-center mb-4 font-bold">Contact</span>
+					<span data-name="contact" class="w-full text-center mb-4 font-bold">Contact</span>
 				</div>
-				<input type="file" class="hidden" accept="image/*" name="image">
-				<input type="file" class="hidden" accept=".doc,.docx,.ppt,.pptx,.xls,.xlsx" name="document">
-				<input type="file" class="hidden" accept=".mp3,.wav" name="audio">
-				<input type="file" class="hidden" accept=".csv" name="contact">
+				<input @change="changeFile" type="file" class="hidden" accept="image/*" name="image">
+				<input @change="changeFile" type="file" class="hidden" accept=".doc,.docx,.ppt,.pptx,.xls,.xlsx" name="document">
+				<input @change="changeFile" type="file" class="hidden" accept=".mp3,.wav" name="audio">
+				<input @change="changeFile" type="file" class="hidden" accept=".csv" name="contact">
 			</div>
 			<input v-model="message" class="bg-white border mx-auto w-full md:w-1/2 p-3 focus:outline-none focus:ring" type="text" placeholder="Type here...">
-			<div @click="attachmentAction" id="action-attachment" class="fixed right-0 bottom-0 mb-14 bg-blue-400 rounded-full p-5 shadow-2xl mr-5 transition-all duration-500 cursor-pointer">
+			<div @click="attachmentAction" id="action-attachment" class="fixed md:hidden right-0 bottom-0 mb-14 bg-blue-400 rounded-full p-5 shadow-2xl mr-5 transition-all duration-500 cursor-pointer">
 				<PaperClipIcon class="h-6 w-6 text-white"></PaperClipIcon>
 			</div>
 		</form>
@@ -111,8 +115,7 @@ import {
 	PaperClipIcon,
 	InformationCircleIcon
 } from '@vue-hero-icons/outline'
-import {db, auth} from '@/firebase'
-import firebase from 'firebase'
+import {db, auth, storage, firebase} from '@/firebase'
 export default{
 	components: {
 		DotsVerticalIcon,
@@ -131,7 +134,13 @@ export default{
 			chat: [],
 			active: [],
 			admin: false,
-			closed: false
+			closed: false,
+			uploaded: {
+				img: null,
+				doc: null,
+				audio: null,
+				csv: null
+			}
 		}
 	},
 	destroy(){
@@ -145,13 +154,8 @@ export default{
 			}
 		})
 	},
-	created(){
-		window.addEventListener('beforeunload', (e) => {
-			e.preventDefault()
-			e.returnValue = ''
-		})
-	},
 	mounted(){
+		window.db = db
 		document.title = `Room ${this.$route.params.id} | App Chat`
 		this.id = this.$route.params.id
 		db.ref(`chats/${this.id}`).get().then((res) => {
@@ -195,16 +199,86 @@ export default{
 	methods: {
 		sendChat(e){
 			e.preventDefault()
-			db.ref(`chats/${this.id}/chat`).push({
-				user_id: auth.currentUser.uid,
-				name: auth.currentUser.displayName,
-				avatar: auth.currentUser.photoURL,
-				message: this.message,
-				created: firebase.database.ServerValue.TIMESTAMP
-			}).then((res) => {
-				db.ref(`chats/${this.id}/chat/${res.key}`).update({id: res.key})
-				this.message = ''
-			}).catch(e => console.log(e))
+			if(this.uploaded.img){
+				storage.ref(`/images/${this.uploaded.img.name}`).put(this.uploaded.img).then(snapshot => {
+					snapshot.ref.getDownloadURL().then(url => {
+						db.ref(`chats/${this.id}/chat`).push({
+							user_id: auth.currentUser.uid,
+							name: auth.currentUser.displayName,
+							img: url,
+							avatar: auth.currentUser.photoURL,
+							message: this.message,
+							created: firebase.database.ServerValue.TIMESTAMP
+						}).then((res) => {
+							db.ref(`chats/${this.id}/chat/${res.key}`).update({id: res.key})
+							this.message = ''
+						})
+					})
+				})
+			}
+			if(this.uploaded.audio){
+				storage.ref(`/audio/${this.uploaded.audio.name}`).put(this.uploaded.audio).then(snapshot => {
+					snapshot.ref.getDownloadURL().then(url => {
+						db.ref(`chats/${this.id}/chat`).push({
+							user_id: auth.currentUser.uid,
+							name: auth.currentUser.displayName,
+							audio: url,
+							avatar: auth.currentUser.photoURL,
+							message: this.message,
+							created: firebase.database.ServerValue.TIMESTAMP
+						}).then((res) => {
+							db.ref(`chats/${this.id}/chat/${res.key}`).update({id: res.key})
+							this.message = ''
+						})
+					})
+				})
+			}
+			if(this.uploaded.doc){
+				storage.ref(`/doc/${this.uploaded.doc.name}`).put(this.uploaded.doc).then(snapshot => {
+					snapshot.ref.getDownloadURL().then(url => {
+						db.ref(`chats/${this.id}/chat`).push({
+							user_id: auth.currentUser.uid,
+							name: auth.currentUser.displayName,
+							doc: url,
+							avatar: auth.currentUser.photoURL,
+							message: this.message,
+							created: firebase.database.ServerValue.TIMESTAMP
+						}).then((res) => {
+							db.ref(`chats/${this.id}/chat/${res.key}`).update({id: res.key})
+							this.message = ''
+						})
+					})
+				})
+			}
+			if(this.uploaded.csv){
+				storage.ref(`/csv/${this.uploaded.csv.name}`).put(this.uploaded.csv).then(snapshot => {
+					snapshot.ref.getDownloadURL().then(url => {
+						db.ref(`chats/${this.id}/chat`).push({
+							user_id: auth.currentUser.uid,
+							name: auth.currentUser.displayName,
+							csv: url,
+							avatar: auth.currentUser.photoURL,
+							message: this.message,
+							created: firebase.database.ServerValue.TIMESTAMP
+						}).then((res) => {
+							db.ref(`chats/${this.id}/chat/${res.key}`).update({id: res.key})
+							this.message = ''
+						})
+					})
+				})
+			}
+			else{
+				db.ref(`chats/${this.id}/chat`).push({
+					user_id: auth.currentUser.uid,
+					name: auth.currentUser.displayName,
+					avatar: auth.currentUser.photoURL,
+					message: this.message,
+					created: firebase.database.ServerValue.TIMESTAMP
+				}).then((res) => {
+					db.ref(`chats/${this.id}/chat/${res.key}`).update({id: res.key})
+					this.message = ''
+				})
+			}
 		},
 		deleteChat(e){
 			db.ref(`chats/${this.id}/chat/${e.target.dataset.id}`).remove()
@@ -239,6 +313,7 @@ export default{
 		},
 		chooseFile(e){
 			e.preventDefault()
+			console.log(e.target.dataset.name)
 			document.querySelector(`input[name="${e.target.dataset.name}"]`).click()
 		},
 		actionRoom(e){
@@ -272,12 +347,46 @@ export default{
 				body.classList.add('hidden')
 				bodyActive.classList.remove('hidden')
 			}
+		},
+		uploadFile(e){
+			e.preventDefault()
+			if(this.uploaded.img){
+				storage.ref(`/images/${this.uploaded.img.name}`).put(this.uploaded.img).then(snapshot => {
+					snapshot.ref.getDownloadURL().then(url => {
+						db.ref(`chats/${this.id}/chat`).push({
+							user_id: auth.currentUser.uid,
+							name: auth.currentUser.displayName,
+							img: url,
+							avatar: auth.currentUser.photoURL,
+							message: this.message,
+							created: firebase.database.ServerValue.TIMESTAMP
+						}).then((res) => {
+							db.ref(`chats/${this.id}/chat/${res.key}`).update({id: res.key})
+							this.message = ''
+						})
+					})
+				})
+			}
+		},
+		changeFile(e){
+			if(e.target.name == 'image'){
+				this.uploaded.img = e.target.files[0]
+			}
+			if(e.target.name == 'document'){
+				this.uploaded.doc = e.target.files[0]
+			}
+			if(e.target.name == 'audio'){
+				this.uploaded.audio = e.target.files[0]
+			}
+			if(e.target.name == 'contact'){
+				this.uploaded.csv = e.target.files[0]
+			}
 		}
 	}
 }
 </script>
 <style>
 .mb-min-full{
-	margin-left: 100vh
+	margin-left: 1000vh
 }
 </style>

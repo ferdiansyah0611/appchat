@@ -1,4 +1,8 @@
-import firebase from 'firebase'
+import firebase from 'firebase/app'
+import "firebase/auth"
+import "firebase/firestore"
+import "firebase/database"
+import "firebase/storage"
 
 var firebaseConfig = {
 	apiKey: process.env.VUE_APP_APIKEY,
@@ -16,9 +20,12 @@ firebase.initializeApp(firebaseConfig)
 const auth 		= firebase.auth()
 const firestore = firebase.firestore()
 const db 		= firebase.database()
+const storage 	= firebase.storage()
 
 export {
 	auth,
 	firestore,
-	db
+	db,
+	storage,
+	firebase
 }
