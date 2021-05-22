@@ -1,11 +1,10 @@
 <template>
 	<section class="p-4">
 		<div class="bg-white mt-5 p-3 mx-auto w-full md:w-1/2 lg:w-2/5">
-			<h4 class="font-bold text-xl mb-2">Manage Room</h4>
-			<div class="flex space-x-1">
-				<button @click="changeTab" data-name="my-room" class="bg-indigo-400 text-white p-3 font-medium w-1/3 focus:outline-none focus:ring">My Room</button>
-				<button @click="changeTab" data-name="create-room" class="bg-indigo-400 text-white p-3 font-medium w-1/3 focus:outline-none focus:ring">Create Room</button>
-				<button @click="changeTab" data-name="join-room" class="bg-indigo-400 text-white p-3 font-medium w-1/3 focus:outline-none focus:ring">Join Room</button>
+			<div class="flex -mt-9">
+				<button @click="changeTab" data-name="my-room" class="bg-blue-400 text-white p-3 font-medium w-1/3 focus:outline-none">My Room</button>
+				<button @click="changeTab" data-name="create-room" class="bg-blue-400 text-white p-3 font-medium w-1/3 focus:outline-none">Create Room</button>
+				<button @click="changeTab" data-name="join-room" class="bg-blue-400 text-white p-3 font-medium w-1/3 focus:outline-none">Join Room</button>
 			</div>
 			<div id="body-tabs">
 				<div v-for="list in listTab" v-bind:key="list">

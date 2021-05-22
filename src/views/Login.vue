@@ -29,7 +29,7 @@
 	</section>
 </template>
 <script>
-import firebase from 'firebase'
+import {auth, firebase, firestore} from '@/firebase'
 export default{
 	name: 'Login',
 	data: () =>{
@@ -50,7 +50,7 @@ export default{
 		})
 	},
 	beforeMount(){
-		const auth = firebase.auth().currentUser
+		const auth = auth.currentUser
 		if(auth){
 			this.$router.push({name: 'Home'})
 		}
@@ -58,8 +58,8 @@ export default{
 	methods: {
 		facebook(){
 			var provider = new firebase.auth.FacebookAuthProvider();
-			firebase.auth().signInWithPopup(provider).then(res => {
-				firebase.firestore().collection('users').doc(res.user.uid).set({
+			auth.signInWithPopup(provider).then(res => {
+				firestore.collection('users').doc(res.user.uid).set({
 					uid: res.user.uid,
 					name: res.user.displayName,
 					email: res.user.email,
@@ -78,8 +78,8 @@ export default{
 		},
 		google(){
 			var provider = new firebase.auth.GoogleAuthProvider();
-			firebase.auth().signInWithPopup(provider).then(res => {
-				firebase.firestore().collection('users').doc(res.user.uid).set({
+			auth.signInWithPopup(provider).then(res => {
+				firestore.collection('users').doc(res.user.uid).set({
 					uid: res.user.uid,
 					name: res.user.displayName,
 					email: res.user.email,
@@ -98,7 +98,7 @@ export default{
 		},
 		submit(e){
 			e.preventDefault()
-			firebase.auth().signInWithEmailAndPassword(this.email, this.password).then(result => {
+			auth.signInWithEmailAndPassword(this.email, this.password).then(result => {
 				console.log(result)
 			}).catch(e => console.error(e))
 		}

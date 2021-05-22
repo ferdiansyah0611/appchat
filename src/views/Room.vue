@@ -32,15 +32,20 @@
 								<p class="p-2 pl-0 font-bold mt-1">{{data.name}}</p>
 							</div>
 							<div class="p-2 rounded-3xl">
-								<p class="text-sm">{{data.message}}</p>
+								<p class="text-xs sm:text-sm">{{data.message}}</p>
 								<img v-if="data.img" :src="data.img" alt="image">
-								<audio v-if="data.audio" :src="data.audio"></audio>
+								<audio v-if="data.audio" controls="">
+									<source :src="data.audio" type="audio/mpeg"/>
+									Audio is not supported in this browser.
+								</audio>
+								<a class="text-xs sm:text-sm" v-if="data.doc" :href="data.doc" download>Download Document</a>
+								<a class="text-xs sm:text-sm" v-if="data.csv" :href="data.csv" download>Download Contact</a>
 								<p class="text-xs font-medium mt-1">{{new Date(data.created).toLocaleDateString("en-US")}} {{new Date(data.created).toLocaleTimeString("en-US")}}</p>
 							</div>
 							<div class="border-t border-gray-300 flex">
-								<button class="p-2 font-bold text-sm hover:text-red-600 focus:outline-none">Reply</button>
-								<button class="p-2 font-bold text-sm hover:text-red-600 focus:outline-none">Report</button>
-								<button @click="deleteChat" :data-id="data.id" class="p-2 font-bold text-sm hover:text-red-600 focus:outline-none">Delete</button>
+								<button class="p-2 font-bold text-xs sm:text-sm hover:text-red-600 focus:outline-none">Reply</button>
+								<button class="p-2 font-bold text-xs sm:text-sm hover:text-red-600 focus:outline-none">Report</button>
+								<button @click="deleteChat" :data-id="data.id" class="p-2 font-bold text-xs sm:text-sm hover:text-red-600 focus:outline-none">Delete</button>
 							</div>
 						</div>
 					</div>
@@ -52,14 +57,19 @@
 								<p class="p-2 pl-0 font-bold mt-1">{{data.name}}</p>
 							</div>
 							<div class=" p-2 rounded-3xl">
-								<p class="text-sm">{{data.message}}</p>
+								<p class="text-xs sm:text-sm">{{data.message}}</p>
 								<img v-if="data.img" :src="data.img" alt="">
-								<audio v-if="data.audio" :src="data.audio"></audio>
+								<audio v-if="data.audio" controls>
+									<source :src="data.audio" type="audio/mpeg"/>
+									Audio is not supported in this browser.
+								</audio>
+								<a class="text-xs sm:text-sm" v-if="data.doc" :href="data.doc" download>Download Document</a>
+								<a class="text-xs sm:text-sm" v-if="data.csv" :href="data.csv" download>Download Contact</a>
 								<p class="text-xs font-medium mt-1">{{new Date(data.created).toLocaleDateString("en-US")}} {{new Date(data.created).toLocaleTimeString("en-US")}}</p>
 							</div>
 							<div class="border-t border-gray-300 flex">
-								<button class="p-2 font-bold text-sm hover:text-red-600 focus:outline-none">Reply</button>
-								<button class="p-2 font-bold text-sm hover:text-red-600 focus:outline-none">Report</button>
+								<button class="p-2 font-bold text-xs sm:text-sm hover:text-red-600 focus:outline-none">Reply</button>
+								<button class="p-2 font-bold text-xs sm:text-sm hover:text-red-600 focus:outline-none">Report</button>
 							</div>
 						</div>
 					</div>
@@ -155,7 +165,6 @@ export default{
 		})
 	},
 	mounted(){
-		window.db = db
 		document.title = `Room ${this.$route.params.id} | App Chat`
 		this.id = this.$route.params.id
 		db.ref(`chats/${this.id}`).get().then((res) => {
